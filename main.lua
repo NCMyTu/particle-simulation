@@ -17,13 +17,13 @@ function love.load()
         ]]
     }
 
-    particlesPerClick = 7
+    particlesPerClick = 5
 
     particleVelocityMin = 5
-    particleVelocityMax = 60
+    particleVelocityMax = 70
 
-    radiusMin = 5
-    radiusMax = 11
+    particleRadiusMin = 5
+    particleRadiusMax = 10
 
     colors = {
         {1.00, 0.00, 0.20},  -- Laser Red
@@ -34,6 +34,13 @@ function love.load()
         {0.00, 0.75, 1.00},  -- Electric Cyan
         {1.00, 0.20, 0.70},  -- Hot Magenta
     }
+
+    -- where to print string on screen
+    stringX = 5
+    stringY = 5
+
+    debugFont = love.graphics.newFont(14)
+    largeFont = love.graphics.newFont(17)
 end
 
 function love.update(dt)
@@ -65,13 +72,36 @@ function love.draw()
         end
 
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print(getDebugString(), 5, 5)
+    love.graphics.print(getDebugString(), debugFont, stringX, stringY)
+
+    -- find y value to place instructions in the right place
+    local debugStringHeight = countLines(getDebugString()) * debugFont:getHeight()
+    local spacer = 4
+    local instructions = "Left click to spawn particles\nPress D to clear all particles"
+    love.graphics.print(instructions, largeFont, stringX, debugStringHeight + spacer + stringY)
+end
+
+function love.keypressed(key)
+    if key == "d" then
+        particles = {}
+    end
+end
+
+function love.mousepressed(x, y, button)
+    if button == 1 then -- left mouse
+        generateParticles(particlesPerClick, x, y, particleRadiusMin, particleRadiusMax, particleVelocityMin, particleVelocityMax)
+    end
 end
 
 function getDebugString()
-    fpsStr = tostring(love.timer.getFPS()) .. " FPS" .. "\n" .. tostring(#particles) .. " particles"
+    debugStr = tostring(love.timer.getFPS()) .. " FPS\n" .. tostring(#particles) .. " particles"
 
-    return fpsStr
+    return debugStr
+end
+
+function countLines(str)
+    local _, count = str:gsub("\n", "")
+    return count + 1
 end
 
 function generateParticle(x, y, radiusMin, radiusMax, particleVelocityMin, particleVelocityMax)
@@ -97,12 +127,6 @@ end
 function generateParticles(nParticles, x, y, radiusMin, radiusMax, particleVelocityMin, particleVelocityMax)
     for i = 1, nParticles do
         generateParticle(x, y, radiusMin, radiusMax, particleVelocityMin, particleVelocityMax)
-    end
-end
-
-function love.mousepressed(x, y, button)
-    if button == 1 then -- left mouse
-        generateParticles(particlesPerClick, x, y, radiusMin, radiusMax, particleVelocityMin, particleVelocityMax)
     end
 end
 
