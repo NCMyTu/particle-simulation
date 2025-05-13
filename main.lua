@@ -94,7 +94,7 @@ function love.mousepressed(x, y, button)
 end
 
 function getDebugString()
-    debugStr = tostring(love.timer.getFPS()) .. " FPS\n" .. tostring(#particles) .. " particles"
+    local debugStr = tostring(love.timer.getFPS()) .. " FPS\n" .. tostring(#particles) .. " particles"
 
     return debugStr
 end
